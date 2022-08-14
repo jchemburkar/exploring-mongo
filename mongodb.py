@@ -46,9 +46,49 @@ def insert_using_insert_one(collection: pymongo.collection.Collection) -> None:
 
 def insert_using_insert_many(collection: pymongo.collection.Collection) -> None:
     """ create two sample rows by using insert many """
-    document_one = {"_id": 3, "message": "insert many part 1"}
-    document_two = {"_id": 4, "message": "insert many part 2"}
-    collection.insert_many([document_one, document_two])
+    document_three = {"_id": 3, "message": "insert many part 1"}
+    document_four = {"_id": 4, "message": "insert many part 2"}
+    collection.insert_many([document_three, document_four])
+
+
+##################
+# query database #
+##################
+
+def query_database_using_filter(collection: pymongo.collection.Collection) -> None:
+    """ find a row using simple filters, on _id and on a non-id column """
+    print()
+    print("Querying DB Using Filter")
+
+    # use a single filter on _id
+    document_one = list(collection.find({"_id": 1}))
+    if len(document_one) > 0:
+        print(f"Found document with _id=1 by id: {document_one}")
+
+    # use a compound filter on non-id fields
+    document_two = list(collection.find({"author": "jonathan", "message": "this is a test"}))
+    if len(document_two) > 0:
+        print(f"Found document with _id=2 by author, message: {document_two}")
+
+
+def query_database_using_regex(collection: pymongo.collection.Collection) -> None:
+    """ we want to find the document with _id=2; use a regex to find is in the message """
+    print()
+    print("Querying DB Using Regex")
+    regex = "^this" # message starts with 'this'
+    document_two = list(collection.find({"message": {"$regex": regex}}))
+    if len(document_two) > 0:
+        print(f"Found document with _id=2 using regex on message: {document_two}")
+
+
+def query_database_for_missing_field(collection: pymongo.collection.Collection) -> None:
+    """ search for rows 3 and 4 by checking for the absence of a author! """
+    print()
+    print("Querying DB Using Field Exists")
+    query = {"author": {"$exists": False}}
+    documents = list(collection.find(query))
+    if len(documents) > 0:
+        print(f"Found the following documents missing authors: {documents}")
 
 
 ########
@@ -60,7 +100,15 @@ def main():
     client = connect_to_database()
     database = get_database(client, "testdb")
     collection = get_collection(database, "testcollection")
-    insert_using_insert_many(collection)
+
+    # populate db
+    # insert_using_insert_one(collection)
+    # insert_using_insert_many(collection)
+
+    # verify data / try querying methods
+    query_database_using_filter(collection)
+    query_database_using_regex(collection)
+    query_database_for_missing_field(collection)
 
 
 if __name__ == "__main__":
