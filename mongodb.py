@@ -102,8 +102,8 @@ def main():
     collection = get_collection(database, "testcollection")
 
     # populate db
-    # insert_using_insert_one(collection)
-    # insert_using_insert_many(collection)
+    insert_using_insert_one(collection)
+    insert_using_insert_many(collection)
 
     # verify data / try querying methods
     query_database_using_filter(collection)
