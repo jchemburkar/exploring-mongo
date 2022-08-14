@@ -36,12 +36,19 @@ def get_collection(database: pymongo.database.Database, collection_name: str) ->
     return collection
 
 
-def insert_test_data(collection: pymongo.collection.Collection) -> None:
-    """ """
-    sample_data = {"message": "hello world", "author": "jchem"}
-    more_sample_data = {"message": "this is a test", "author": "jonathan"}
-    collection.insert_one(sample_data)
-    collection.insert_one(more_sample_data)
+def insert_using_insert_one(collection: pymongo.collection.Collection) -> None:
+    """ create two sample rows by using insert one """
+    document_one = {"_id": 1, "message": "hello world", "author": "jchem"}
+    document_two = {"_id": 2, "message": "this is a test", "author": "jonathan"}
+    collection.insert_one(document_one)
+    collection.insert_one(document_two)
+
+
+def insert_using_insert_many(collection: pymongo.collection.Collection) -> None:
+    """ create two sample rows by using insert many """
+    document_one = {"_id": 3, "message": "insert many part 1"}
+    document_two = {"_id": 4, "message": "insert many part 2"}
+    collection.insert_many([document_one, document_two])
 
 
 ########
@@ -53,7 +60,7 @@ def main():
     client = connect_to_database()
     database = get_database(client, "testdb")
     collection = get_collection(database, "testcollection")
-    insert_test_data(collection)
+    insert_using_insert_many(collection)
 
 
 if __name__ == "__main__":
